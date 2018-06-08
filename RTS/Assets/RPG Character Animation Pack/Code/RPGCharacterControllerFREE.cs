@@ -112,7 +112,11 @@ public class RPGCharacterControllerFREE : MonoBehaviour{
 	bool inputCastR;
 	bool inputJump;
 
+    //my parameter
+
     bool inputCarry;
+    public Transform carryPosition;
+    public Transform putDownPosition;
 
 	#endregion
 
@@ -158,44 +162,47 @@ public class RPGCharacterControllerFREE : MonoBehaviour{
         inputCarry = Input.GetButtonDown("Carry");
 	}
 
-	#endregion
+    #endregion
 
-	#region Updates
+    #region Updates
 
-	void Update(){
-		Inputs();
-		if(canMove && !isDead && !useNavMesh){
-			CameraRelativeMovement();
-		} 
-		Rolling();
-		Jumping();
-		if(inputLightHit && canAction && isGrounded){
-			GetHit();
-		}
-		if(inputDeath && canAction && isGrounded){
-			if(!isDead){
-				Death();
-			}
-			else{
-				Revive();
-			}
-		}
-		if(inputAttackL && canAction && isGrounded){
-			Attack(1);
-		}
-		if(inputAttackR && canAction && isGrounded){
-			Attack(2);
-		}
-		if(inputCastL && canAction && isGrounded && !isStrafing){
-			AttackKick(1);
-		}
-		if(inputCastR && canAction && isGrounded && !isStrafing){
-			AttackKick(2);
-		}
+    void Update() {
+        Inputs();
+        if (canMove && !isDead && !useNavMesh) {
+            CameraRelativeMovement();
+        }
+        Rolling();
+        Jumping();
+        if (inputLightHit && canAction && isGrounded) {
+            GetHit();
+        }
+        if (inputDeath && canAction && isGrounded) {
+            if (!isDead) {
+                Death();
+            }
+            else {
+                Revive();
+            }
+        }
+        if (inputAttackL && canAction && isGrounded) {
+            Attack(1);
+        }
+        if (inputAttackR && canAction && isGrounded) {
+            Attack(2);
+        }
+        if (inputCastL && canAction && isGrounded && !isStrafing) {
+            AttackKick(1);
+        }
+        if (inputCastR && canAction && isGrounded && !isStrafing) {
+            AttackKick(2);
+        }
         //Carry
-        if (inputCarry && canAction && isGrounded)
+        if (inputCarry && canAction && isGrounded && (carry == global::Carry.NOTCARRY))
         {
             Carry();
+        } else if (inputCarry && canAction && isGrounded && (carry == global::Carry.CARRY))
+        {
+            putDown();
         }
 
 
@@ -578,24 +585,18 @@ public class RPGCharacterControllerFREE : MonoBehaviour{
 
     public void Carry()
     {
-        if (carry == global::Carry.NOTCARRY)
-        {
+       
             StartCoroutine(_LockMovementAndAttack(0, 1.16f));
             carry = global::Carry.CARRY;
             animator.SetInteger("Weapon", 1);
-        }
-        else
-        {
+       
+    }
+     public void putDown()
+     {
             StartCoroutine(_LockMovementAndAttack(0, 1.16f));
             carry = global::Carry.NOTCARRY;
             animator.SetInteger("Weapon", 0);
-        }
-
-       
-        
-       
-    }
-
+}
 
 
 	#endregion
